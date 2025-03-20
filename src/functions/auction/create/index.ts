@@ -1,4 +1,5 @@
 import { handlerPath } from '@libs/handler-resolver';
+import { auth0Authorizer } from '@constants';
 
 export default {
   handler: `${handlerPath(__dirname)}/handler.main`,
@@ -7,14 +8,7 @@ export default {
       http: {
         method: 'POST',
         path: 'auction',
-        authorizer: {
-          name: 'auth0Authorizer',
-          arn: {
-            'Fn::ImportValue': 'api-authorizer-${self:provider.stage}-AuthorizerLambdaFunctionArn',
-          },
-          identitySource: 'method.request.header.Authorization',
-          resultTtlInSeconds: 0
-        }
+        authorizer: auth0Authorizer
       },
     },
   ],
