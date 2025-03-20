@@ -1,6 +1,23 @@
 import { APIGatewayProxyEvent } from "aws-lambda";
 
-export type APIGatewayTypedEvent<T={}, P = {}> = Omit<APIGatewayProxyEvent, "body"> & { body: T, pathParameters: P };
+export interface Auth0Authorizer {
+  scope: string;
+  name: string;
+  principalId: string;
+  userId: string;
+  email?: string;
+  [key: string]: any; // For any additional fields
+}
+
+export interface APIGatewayRequestContext extends Omit<APIGatewayProxyEvent['requestContext'], 'authorizer'> {
+  authorizer: Auth0Authorizer;
+}
+
+export type APIGatewayTypedEvent<T={}, P = {}> = Omit<APIGatewayProxyEvent, "body" | "requestContext"> & { 
+  body: T;
+  pathParameters: P;
+  requestContext: APIGatewayRequestContext;
+};
 
 export enum AUCTION_STATUS {
   OPEN = 'OPEN',
@@ -17,4 +34,5 @@ export type Auction = {
     amount: number;
     bidder: string | null;
   };
+  seller: string;
 };

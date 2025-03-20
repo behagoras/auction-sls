@@ -15,12 +15,26 @@ export const placeBid = async (
 ): Promise<APIGatewayProxyResult> => {
   const { id } = event.pathParameters;
   const { amount } = event.body;
+  const { userId = 'anonymous' } = event.requestContext.authorizer;
 
   const auction = await getAuctionById(id);
 
+  // Prevent bidding on your own auctions
+  if (auction.seller === userId) {
+    throw new createError.Forbidden(`You cannot bid on your own auctions!`);
+  }
+
+  // Prevent bidding if you are already the highest bidder
+  if (auction.highestBid.bidder === userId) {
+    throw new createError.Forbidden(`You are already the highest bidder!`);
+  }
+
+  // Prevent bidding if the amount is not higher than the highest bid
   if (+amount <= auction.highestBid.amount) {
     throw new createError.Forbidden(`Your bid must be higher than ${auction.highestBid.amount}!`);
   }
+
+  // Prevent bidding on closed auctions
   if (auction.status !== 'OPEN') {
     throw new createError.Forbidden(`You cannot bid on closed auctions!`);
   }
@@ -28,9 +42,10 @@ export const placeBid = async (
   const params: UpdateCommandInput = {
     TableName: process.env.AUCTION_TABLE_NAME,
     Key: { id },
-    UpdateExpression: 'set highestBid.amount = :amount',
+    UpdateExpression: 'set highestBid.amount = :amount, highestBid.bidder = :bidder',
     ExpressionAttributeValues: {
       ':amount': amount,
+      ':bidder': userId,
     },
     ReturnValues: 'ALL_NEW',
   }
