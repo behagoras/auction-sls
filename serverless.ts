@@ -20,6 +20,8 @@ const serverlessConfiguration: AWS = {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
       NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=1000',
       AUCTION_TABLE_NAME: '${self:custom.AuctionsTable.tableName}',
+      MAIL_QUEUE_URL: '${self:custom.MainQueue.url}',
+      MAIL_QUEUE_ARN: '${self:custom.MainQueue.arn}',
     },
     iam: {
       role: {
@@ -62,6 +64,10 @@ const serverlessConfiguration: AWS = {
       arn: {
         "Fn::Sub": `arn:aws:dynamodb:\${AWS::Region}:\${AWS::AccountId}:table/\${self:custom.AuctionsTable.tableName}`,
       },
+    },
+    MainQueue: {
+      arn: 'cf:notifications-service-${self:provider.stage}.MailQueueArn',
+      url: 'cf:notifications-service-${self:provider.stage}.MailQueueUrl',
     },
   },
 };
