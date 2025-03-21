@@ -14,7 +14,7 @@ export const placeBid = async (
   event: APIGatewayTypedEvent<CreateAuctionInputSchema>,
 ): Promise<APIGatewayProxyResult> => {
   const { title } = event.body;
-  const { userId = 'anonymous' } = event.requestContext.authorizer;
+  const { userId = 'anonymous', email } = event.requestContext.authorizer;
   
   const client = new DynamoDBClient({});
   const docClient = DynamoDBDocumentClient.from(client);
@@ -23,9 +23,11 @@ export const placeBid = async (
   const endDate = new Date();
   endDate.setHours(now.getHours() + 1);
 
+  const seller = email ?? userId;
+
   const auction = createNewAuctionItem({
     title,
-    seller: userId,
+    seller,
     createdDate: now,
     endingAt: endDate
   });

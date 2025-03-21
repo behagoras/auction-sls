@@ -1,6 +1,6 @@
 import type { AWS } from '@serverless/typescript';
 
-import { AuctionsTableIam } from './iam';
+import { AuctionsTableIam, MailQueueIAM } from './iam';
 import { AuctionsTableResource } from './resources';
 
 import { auctionFunctions } from '@functions';
@@ -20,20 +20,21 @@ const serverlessConfiguration: AWS = {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
       NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=1000',
       AUCTION_TABLE_NAME: '${self:custom.AuctionsTable.tableName}',
-      MAIL_QUEUE_URL: '${self:custom.MainQueue.url}',
-      MAIL_QUEUE_ARN: '${self:custom.MainQueue.arn}',
+      MAIL_QUEUE_URL: '${self:custom.MailQueue.url}',
+      MAIL_QUEUE_ARN: '${self:custom.MailQueue.arn}',
     },
     iam: {
       role: {
         statements: [
           AuctionsTableIam,
+          MailQueueIAM,
         ]
       },
     },
   },
   resources: {
     Resources: {
-      AuctionsTable: AuctionsTableResource,
+      AuctionsTable: AuctionsTableResource
     }
   },
   configValidationMode: 'error',
@@ -65,9 +66,13 @@ const serverlessConfiguration: AWS = {
         "Fn::Sub": `arn:aws:dynamodb:\${AWS::Region}:\${AWS::AccountId}:table/\${self:custom.AuctionsTable.tableName}`,
       },
     },
-    MainQueue: {
-      arn: 'cf:notifications-service-${self:provider.stage}.MailQueueArn',
-      url: 'cf:notifications-service-${self:provider.stage}.MailQueueUrl',
+    MailQueue: {
+      arn: {
+        "Fn::Sub": "arn:aws:sqs:${AWS::Region}:${AWS::AccountId}:notifications-service-${self:provider.stage}-mail-queue"
+      },
+      url: {
+        "Fn::Sub": "https://sqs.${AWS::Region}.amazonaws.com/${AWS::AccountId}/notifications-service-${self:provider.stage}-mail-queue"
+      }
     },
   },
 };

@@ -3,9 +3,7 @@ const MailQueueIAM = {
   Action: [
     'sqs:SendMessage',
   ],
-  Resource: [
-    '${self:custom.MainQueue.arn}'
-  ]
+  Resource: '${self:custom.MailQueue.arn}'
 };
 
 export default MailQueueIAM;
