@@ -13,10 +13,11 @@ export const uploadAuctionPicture = async (
 ): Promise<APIGatewayProxyResult> => {
   const { id } = event.pathParameters;
   const auction = await getAuctionById(id);
-  const base64 = event.body;
-  const buffer = Buffer.from(base64, 'base64');
 
-  const s3 = await uploadPictureToS3(`auctions/${auction.id}.jpg`, buffer);
+  const base64 = event.body;
+
+  const s3 = await uploadPictureToS3(`auctions/${auction.id}.jpg`, base64);
+  
   console.log(s3);
   
   return {
@@ -29,13 +30,13 @@ export const uploadAuctionPicture = async (
   };
 };
 
-export const main = uploadAuctionPicture
-  // .use(
-  //   validator({
-  //     eventSchema: uploadPictureInputSchema,
-  //     ajvOptions: {
-  //       strict: false,
-  //       useDefaults: true,
-  //     }
-  //   })
-  // );
+export const main = commonMiddleware(uploadAuctionPicture)
+  .use(
+    validator({
+      eventSchema: uploadPictureInputSchema,
+      ajvOptions: {
+        strict: false,
+        useDefaults: true,
+      }
+    })
+  );

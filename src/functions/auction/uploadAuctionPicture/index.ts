@@ -8,7 +8,7 @@ export default {
       http: {
         method: 'POST',
         path: 'auction/{id}/picture',
-        authorizer: auth0Authorizer
+        authorizer: auth0Authorizer,
       },
     },
   ],
