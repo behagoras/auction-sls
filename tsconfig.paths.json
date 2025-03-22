@@ -2,12 +2,18 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
+      // serverless
+      "@resources": ["resources/index.ts"],
+      "@resources/*": ["resources/*"],
+      "@iam": ["iam/index.ts"],
+      "@iam/*": ["iam/*"],
+      // src
+      "@constants": ["src/constants/index.ts"],
+      "@constants/*": ["src/constants/*"],
       "@functions": ["src/functions/index.ts"],
       "@functions/*": ["src/functions/*"],
       "@libs": ["src/libs/index.ts"],
       "@libs/*": ["src/libs/*"],
-      "@constants": ["src/constants/index.ts"],
-      "@constants/*": ["src/constants/*"],
       "@types": ["src/types/index.ts"],
       "@types/*": ["src/types/*"],
       "@utils": ["src/utils/index.ts"],

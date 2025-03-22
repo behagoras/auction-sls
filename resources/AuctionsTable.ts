@@ -1,6 +1,4 @@
-import type { AWS } from '@serverless/typescript'
-
-type CloudFormationResource = NonNullable<AWS['resources']>['Resources'][string];
+import type { CloudFormationResource } from './types';
 
 const AuctionsTableResource: CloudFormationResource = {
   Type: 'AWS::DynamoDB::Table',

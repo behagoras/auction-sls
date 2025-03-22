@@ -1,9 +1,8 @@
 import type { AWS } from '@serverless/typescript';
 
-import { AuctionsTableIam, MailQueueIAM } from './iam';
-import { AuctionsTableResource } from './resources';
-
 import { auctionFunctions } from '@functions';
+import iamRoleStatements from '@iam';
+import resources from '@resources';
 
 const serverlessConfiguration: AWS = {
   service: 'auction',
@@ -22,19 +21,17 @@ const serverlessConfiguration: AWS = {
       AUCTION_TABLE_NAME: '${self:custom.AuctionsTable.tableName}',
       MAIL_QUEUE_URL: '${self:custom.MailQueue.url}',
       MAIL_QUEUE_ARN: '${self:custom.MailQueue.arn}',
+      AUCTIONS_BUCKET_NAME: '${self:custom.AuctionsBucket.name}',
     },
     iam: {
       role: {
-        statements: [
-          AuctionsTableIam,
-          MailQueueIAM,
-        ]
+        statements: iamRoleStatements
       },
     },
   },
   resources: {
     Resources: {
-      AuctionsTable: AuctionsTableResource
+      ...resources,
     }
   },
   configValidationMode: 'error',
@@ -65,6 +62,12 @@ const serverlessConfiguration: AWS = {
       arn: {
         "Fn::Sub": `arn:aws:dynamodb:\${AWS::Region}:\${AWS::AccountId}:table/\${self:custom.AuctionsTable.tableName}`,
       },
+    },
+    AuctionsBucket: {
+      name: "auctions-ferocity-bucket-${self:provider.stage}",
+      arn: {
+        "Fn::Sub": "arn:aws:s3:::${self:custom.AuctionsBucket.name}"
+      }
     },
     MailQueue: {
       arn: {

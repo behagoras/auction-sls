@@ -1,8 +1,10 @@
 import { default as AuctionsTableResource } from './AuctionsTable';
+import { AuctionsBucket, AuctionsBucketPolicy } from './AuctionsBucket';
 
 const resources = {
-  AuctionsTableResource,
+  AuctionsTable: AuctionsTableResource,
+  AuctionsBucket,
+  AuctionsBucketPolicy,
 };
 
 export default resources;
-export { AuctionsTableResource };
