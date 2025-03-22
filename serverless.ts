@@ -28,6 +28,9 @@ const serverlessConfiguration: AWS = {
         statements: iamRoleStatements
       },
     },
+    apiGateway: {
+      binaryMediaTypes: ['image/jpeg', 'image/png', 'image/*', 'multipart/form-data'],
+    },
   },
   resources: {
     Resources: {
@@ -52,6 +55,9 @@ const serverlessConfiguration: AWS = {
       external: [
         '@aws-sdk/client-dynamodb',
         '@aws-sdk/lib-dynamodb',
+        '@aws-sdk/client-s3',
+        '@aws-sdk/client-sqs',
+        '@aws-sdk/middleware-sdk-s3',
       ],
     },
     bundle: {
