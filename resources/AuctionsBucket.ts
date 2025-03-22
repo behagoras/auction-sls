@@ -10,6 +10,15 @@ export const AuctionsBucket: CloudFormationResource = {
       IgnorePublicAcls: false,
       RestrictPublicBuckets: false
     },
+    LifecycleConfiguration: {
+      Rules: [
+        {
+          Id: 'ExpirePictures',
+          Status: 'Enabled',
+          ExpirationInDays: 1,
+        }
+      ]
+    },
     OwnershipControls: {
       Rules: [
         {
