@@ -56,6 +56,17 @@ export default async function closeAuction(auction) {
     return [];
   }
 
+  if (amount === 0) {
+    console.log(`No bid amount for auction ${auction.id}, notifying bidder`);
+    return notify({
+      subject: `Auction ${title} closed with no bids`,
+      recipient: bidder,
+      body: `Oh no! The auction ${title} closed with no bids. Better luck next time!`,
+    });
+  }
+
+  console.log(`Sending notifications for auction ${auction.id} to bidder ${bidder} and seller ${seller}`);
+
   const notifyBidder = notify({
     subject: `You won an auction!`,
     recipient: bidder,
